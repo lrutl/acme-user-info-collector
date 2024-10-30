@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Acme.UserInfoCollector.Middleware
 {
+    /// <summary>
+    /// Person view model
+    /// </summary>
     public class PersonVM : ObservableValidator
     {
         private readonly ILogger<PersonVM> _logger;
