@@ -49,5 +49,36 @@ namespace Acme.UserInfoCollector.Test
 
             Assert.Pass();
         }
+
+        [Test]
+        public void SaveInvalidUserNameTest()
+        {
+            var user = GetJohnDoe();
+            user.FirstName = "should|fail";
+            var exportService = _serviceProvider.GetRequiredService<UserExporterService>();
+            bool success = exportService.SaveUser(user);
+            Assert.That(success, Is.False);
+        }
+
+        [Test]
+        public void SaveInvalidUserAgeTest()
+        {
+            var user = GetJohnDoe();
+            user.DateOfBirth = DateTime.Now.AddYears(-14);
+            var exportService = _serviceProvider.GetRequiredService<UserExporterService>();
+            bool success = exportService.SaveUser(user);
+            Assert.That(success, Is.False);
+        }
+
+        [Test]
+        public void SaveInvalidUserParentalConsentTest()
+        {
+            var user = GetJohnDoe();
+            user.DateOfBirth = DateTime.Now.AddYears(-17);
+            user.ParentalConsent = Middleware.Enumerations.ParentalConsent.No;
+            var exportService = _serviceProvider.GetRequiredService<UserExporterService>();
+            bool success = exportService.SaveUser(user);
+            Assert.That(success, Is.False);
+        }
     }
 }

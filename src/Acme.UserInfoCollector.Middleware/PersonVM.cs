@@ -13,7 +13,7 @@ namespace Acme.UserInfoCollector.Middleware
 
         private string _FirstName = string.Empty;
         private string _Surname = string.Empty;
-        private DateTime _DateOfBirth = DateTime.Now;
+        private DateTime _DateOfBirth = DateTime.MinValue;
         private MaritalStatus _MaritalStatus;
         private ParentalConsent _ParentalConsent;
         private PersonVM _PartnerInfo;
@@ -45,6 +45,8 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// User's date of birth
         /// </summary>
+        ///        
+        [CustomValidation(typeof(PersonVM), nameof(ValidateUserAge))]
         public DateTime DateOfBirth { get => _DateOfBirth; set => SetProperty(ref _DateOfBirth, value); }
 
         /// <summary>
@@ -76,6 +78,7 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Whether or not the user's parent has given consent for info to be exported
         /// </summary>
+        [CustomValidation(typeof(PersonVM), nameof(ValidateUserParentalConsent))]
         public ParentalConsent ParentalConsent { get => _ParentalConsent; set => SetProperty(ref _ParentalConsent, value); }
 
         /// <summary>
@@ -89,6 +92,35 @@ namespace Acme.UserInfoCollector.Middleware
         public string PartnerInfoPath { get => _PartnerInfoPath; set => SetProperty(ref _PartnerInfoPath, value); }
 
         /// <summary>
+        /// Validate user parental consent
+        /// </summary>
+        public static ValidationResult ValidateUserParentalConsent(ParentalConsent parentalConsent, ValidationContext partnerInfo)
+        {
+            if (parentalConsent == ParentalConsent.No)
+            {
+                return new ValidationResult("A parental figure has explicity asked for the user not to use this applicaton.");
+            }
+
+            return ValidationResult.Success;
+        }
+
+        /// <summary>
+        /// Validate a user's age
+        /// </summary>
+        /// <param name="toValidate">Age to validate</param>
+        /// <param name="context">Validation context</param>
+        /// <returns></returns>
+        public static ValidationResult ValidateUserAge(DateTime toValidate, ValidationContext context)
+        {
+            if (toValidate.AddYears(16) <= DateTime.Now)
+            {
+                return ValidationResult.Success;
+            }
+
+            return new ValidationResult("User must be 16 years old to use this application.");
+        }
+
+        /// <summary>
         /// Custom validation to ensure user does not break the data store
         /// </summary>
         /// <param name="toValidate">String to validate</param>
@@ -100,7 +132,7 @@ namespace Acme.UserInfoCollector.Middleware
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult("The provided value contains unsupported special characters");
+            return new ValidationResult("The provided value contains unsupported special characters.");
         }
     }
 }

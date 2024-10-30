@@ -36,10 +36,8 @@ namespace Acme.UserInfoCollector.ConsoleApp
                     catch (ValidationException vex)
                     {
                         Console.WriteLine(vex.Message);
+                        Console.WriteLine();
                         continue;
-                    }
-                    catch
-                    {
                     }
                 }
                 

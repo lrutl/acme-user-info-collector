@@ -30,6 +30,22 @@ user.GetFromConsole(nameof(user.FirstName), o => o!, "Please enter your first na
 user.GetFromConsole(nameof(user.Surname), o => o!, "Please enter your surname...", genericInputError);
 user.GetFromConsole(nameof(user.DateOfBirth), o => DateTime.Parse(o!), "Please enter your date of birth in MM/DD/YR format...", genericInputError);
 
+var parentConsentPromptMessages = new List<string>()
+{
+    "For users under the age of 16, parental consent is required. Please have a parental figure answer the following.",
+    "Do you consent for your child to use this application?",
+    "1. Yes",
+    "2. No"
+};
+
+if (user.DateOfBirth.AddYears(18) > DateTime.UtcNow)
+{
+    user.GetFromConsole(nameof(user.ParentalConsent),
+        o => (ParentalConsent)Enum.Parse(typeof(ParentalConsent), o!),
+        parentConsentPromptMessages,
+        genericInputError);
+}
+
 var maritalStatusPromptMessages = new List<string>()
 {
     "Please enter your marital status..."
@@ -48,6 +64,14 @@ if (user.IsLegallyMarried)
     user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.FirstName), o => o!, "Please enter your partner's first name...", genericInputError);
     user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.Surname), o => o!, "Please enter your partner's surname...", genericInputError);
     user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.DateOfBirth), o => DateTime.Parse(o!), "Please enter your partner's date of birth in MM/DD/YR format...", genericInputError);
+    if (user.PartnerInfo.DateOfBirth.AddYears(18) > DateTime.UtcNow)
+    {
+        user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.ParentalConsent),
+            o => (ParentalConsent)Enum.Parse(typeof(ParentalConsent), o!),
+            parentConsentPromptMessages,
+            genericInputError);
+    }
+
 }
 
 var exportService = serviceProvider.GetRequiredService<UserExporterService>();

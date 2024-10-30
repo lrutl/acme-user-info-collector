@@ -55,6 +55,7 @@ namespace Acme.UserInfoCollector.Middleware
             {
                 _logger.LogError("Service was provided with an invalid user to export; see following messages for more details");
                 _logger.LogError(vex.Message);
+                return false;
             }
 
             string userExportPath = _configuration.GetValue<string>("UserExportPath");
