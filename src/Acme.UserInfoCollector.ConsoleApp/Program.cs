@@ -42,6 +42,14 @@ foreach (int maritalStatus in typeof(MaritalStatus).GetEnumValues())
 
 user.GetFromConsole(nameof(user.MaritalStatus), o => (MaritalStatus)int.Parse(o!), maritalStatusPromptMessages, genericInputError);
 
+if (user.IsLegallyMarried)
+{
+    user.PartnerInfo = serviceProvider.GetRequiredService<PersonVM>();
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.FirstName), o => o!, "Please enter your partner's first name...", genericInputError);
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.Surname), o => o!, "Please enter your partner's surname...", genericInputError);
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.DateOfBirth), o => DateTime.Parse(o!), "Please enter your partner's date of birth in MM/DD/YR format...", genericInputError);
+}
+
 var exportService = serviceProvider.GetRequiredService<UserExporterService>();
 bool exported = exportService.SaveUser(user);
 if (exported)

@@ -36,7 +36,7 @@ namespace Acme.UserInfoCollector.Middleware
 
         public static string GetUserInfoLine(PersonVM user)
         {
-            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth.Date}|{user.MaritalStatus}|{user.ParentalConsent}|";
+            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth:dd-MM-yyyy}|{user.MaritalStatus}|{user.ParentalConsent}|";
         }
 
         /// <summary>
@@ -79,6 +79,12 @@ namespace Acme.UserInfoCollector.Middleware
                 File.Create(userExportPath).Close();
             }
 
+            if (!Directory.Exists(Path.GetDirectoryName(partnerExportPathFormat)))
+            {
+                _logger.LogInformation($"Creating new partner data store at {Path.GetDirectoryName(partnerExportPathFormat)}");
+                Directory.CreateDirectory(Path.GetDirectoryName(partnerExportPathFormat));
+            }
+
             List<string> allUserData = File.ReadAllLines(userExportPath).ToList();
             string userData = GetUserInfoLine(user);
 
@@ -86,7 +92,9 @@ namespace Acme.UserInfoCollector.Middleware
             {
                 string partnerData = GetUserInfoLine(user.PartnerInfo);
                 string partnerDataPath = string.Format(partnerExportPathFormat, $"{user.PartnerInfo.FirstName}.{Guid.NewGuid()}.txt");
-                userData = $"{userData}{partnerDataPath}";
+                string fullPartnerDataPath = Path.GetFullPath(partnerDataPath);
+
+                userData = $"{userData}{fullPartnerDataPath}";
 
                 try
                 {
