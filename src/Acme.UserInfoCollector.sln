@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.UserInfoCollector.Midd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.UserInfoCollector.ConsoleApp", "Acme.UserInfoCollector.ConsoleApp\Acme.UserInfoCollector.ConsoleApp.csproj", "{AE4BEEA4-BFB4-4DCC-83C8-B6302098F4D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.UserInfoCollector.Test", "Acme.UserInfoCollector.Test\Acme.UserInfoCollector.Test.csproj", "{C75F3D1C-6E0D-47AB-B01F-D082A3B22DDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AE4BEEA4-BFB4-4DCC-83C8-B6302098F4D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE4BEEA4-BFB4-4DCC-83C8-B6302098F4D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE4BEEA4-BFB4-4DCC-83C8-B6302098F4D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C75F3D1C-6E0D-47AB-B01F-D082A3B22DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C75F3D1C-6E0D-47AB-B01F-D082A3B22DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C75F3D1C-6E0D-47AB-B01F-D082A3B22DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C75F3D1C-6E0D-47AB-B01F-D082A3B22DDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
