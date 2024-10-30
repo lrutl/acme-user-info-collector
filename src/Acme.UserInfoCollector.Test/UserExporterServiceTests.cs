@@ -34,7 +34,7 @@ namespace Acme.UserInfoCollector.Test
             person.FirstName = "John";
             person.Surname = "Doe";
             person.DateOfBirth = DateTime.UnixEpoch;
-            person.MaritalStatus = Middleware.Enumerations.MaritalStatus.Single;
+            person.MaritalStatus = MaritalStatus.Single;
 
             return person;
         }
@@ -61,7 +61,9 @@ namespace Acme.UserInfoCollector.Test
         {
             var user = GetJohnDoe();
             user.MaritalStatus = MaritalStatus.Married;
+
             user.PartnerInfo = GetJohnDoe();
+            user.PartnerInfo.FirstName = "Jane";
             user.PartnerInfo.MaritalStatus = MaritalStatus.Married;
 
             var exportService = _serviceProvider.GetService<UserExporterService>();
@@ -76,9 +78,22 @@ namespace Acme.UserInfoCollector.Test
             var latestUser = allUsers.Last();
             var partnerInfoPath = latestUser.Split("|").Last();
             string partnerInfo = File.ReadAllText(partnerInfoPath);
-            Assert.That(partnerInfo, Is.EqualTo("John|Doe|01-01-1970|Married|null|"));
+            Assert.That(partnerInfo, Is.EqualTo("Jane|Doe|01-01-1970|Married|null|"));
 
             Assert.Pass();
+        }
+
+        [Test]
+        public void SaveUserInvalidPartnerTest()
+        {
+            var user = GetJohnDoe();
+            user.MaritalStatus = MaritalStatus.Married;
+
+            var exportService = _serviceProvider.GetService<UserExporterService>();
+            Assert.That(exportService, Is.Not.Null);
+
+            bool success = exportService.SaveUser(user);
+            Assert.That(success, Is.False);
         }
 
         [Test]
@@ -106,7 +121,7 @@ namespace Acme.UserInfoCollector.Test
         {
             var user = GetJohnDoe();
             user.DateOfBirth = DateTime.Now.AddYears(-17);
-            user.ParentalConsent = Middleware.Enumerations.ParentalConsent.No;
+            user.ParentalConsent = ParentalConsent.No;
             var exportService = _serviceProvider.GetRequiredService<UserExporterService>();
             bool success = exportService.SaveUser(user);
             Assert.That(success, Is.False);

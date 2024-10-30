@@ -52,6 +52,7 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Marital status of the user
         /// </summary>
+        [Required]
         public MaritalStatus MaritalStatus { get => _MaritalStatus; set => SetProperty(ref _MaritalStatus, value); }
 
         /// <summary>

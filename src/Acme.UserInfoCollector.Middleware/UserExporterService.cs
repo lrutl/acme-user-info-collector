@@ -48,6 +48,11 @@ namespace Acme.UserInfoCollector.Middleware
         /// <returns>True if given a valid user</returns>
         public bool ValidateUser(PersonVM user)
         {
+            if (user == null)
+            {
+                return false;
+            }
+
             var ctx = new ValidationContext(user, _serviceProvider, new Dictionary<object, object>());
             try
             {
