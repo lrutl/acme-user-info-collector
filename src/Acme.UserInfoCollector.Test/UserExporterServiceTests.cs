@@ -32,7 +32,7 @@ namespace Acme.UserInfoCollector.Test
             person.FirstName = "John";
             person.Surname = "Doe";
             person.DateOfBirth = DateTime.UnixEpoch;
-            person.MaritalStatus = Middleware.Enumerations.MaritalStatus.NeverMarried;
+            person.MaritalStatus = Middleware.Enumerations.MaritalStatus.Single;
 
             return person;
         }

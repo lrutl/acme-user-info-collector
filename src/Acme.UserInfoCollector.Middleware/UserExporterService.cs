@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Acme.UserInfoCollector.Middleware.Enumerations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,9 @@ namespace Acme.UserInfoCollector.Middleware
     /// </summary>
     public class UserExporterService
     {
-        private IServiceProvider _serviceProvider;
-        private ILogger<UserExporterService> _logger;
-        private IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<UserExporterService> _logger;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// This is the parameterized constructor for the user exporter service.
@@ -36,7 +37,8 @@ namespace Acme.UserInfoCollector.Middleware
 
         public static string GetUserInfoLine(PersonVM user)
         {
-            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth:dd-MM-yyyy}|{user.MaritalStatus}|{user.ParentalConsent}|";
+            string consent = user.ParentalConsent == ParentalConsent.NotNeeded ? "null" : user.ParentalConsent.ToString();
+            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth:dd-MM-yyyy}|{user.MaritalStatus}|{consent}|";
         }
 
         /// <summary>

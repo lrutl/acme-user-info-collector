@@ -94,7 +94,7 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Validate user parental consent
         /// </summary>
-        public static ValidationResult ValidateUserParentalConsent(ParentalConsent parentalConsent, ValidationContext partnerInfo)
+        public static ValidationResult ValidateUserParentalConsent(ParentalConsent parentalConsent, ValidationContext context)
         {
             if (parentalConsent == ParentalConsent.No)
             {

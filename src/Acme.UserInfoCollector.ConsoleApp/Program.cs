@@ -26,9 +26,19 @@ string genericInputError = "Invalid entry";
 Console.WriteLine("Hello, this is an application meant to collect and store basic data about its users.");
 Console.WriteLine();
 
-user.GetFromConsole(nameof(user.FirstName), o => o!, "Please enter your first name...", genericInputError);
-user.GetFromConsole(nameof(user.Surname), o => o!, "Please enter your surname...", genericInputError);
-user.GetFromConsole(nameof(user.DateOfBirth), o => DateTime.Parse(o!), "Please enter your date of birth in MM/DD/YR format...", genericInputError);
+user.GetFromConsole(nameof(user.FirstName),
+    o => o!, "Please enter your first name...",
+    genericInputError);
+
+user.GetFromConsole(nameof(user.Surname),
+    o => o!,
+    "Please enter your surname...",
+    genericInputError);
+
+user.GetFromConsole(nameof(user.DateOfBirth),
+    o => DateTime.Parse(o!),
+    "Please enter your date of birth in MM/DD/YR format...",
+    genericInputError);
 
 var parentConsentPromptMessages = new List<string>()
 {
@@ -48,22 +58,38 @@ if (user.DateOfBirth.AddYears(18) > DateTime.UtcNow)
 
 var maritalStatusPromptMessages = new List<string>()
 {
-    "Please enter your marital status..."
+    "Please enter your marital status...",
+    "1. Married",
+    "2. Widowed",
+    "3. Divorced",
+    "4. Separated",
+    "5. Never married",
+    "6. Living with partner but not married"
+
 };
 
-foreach (int maritalStatus in typeof(MaritalStatus).GetEnumValues())
-{
-    maritalStatusPromptMessages.Add($"{maritalStatus}. {((MaritalStatus)maritalStatus)}");
-}
-
-user.GetFromConsole(nameof(user.MaritalStatus), o => (MaritalStatus)int.Parse(o!), maritalStatusPromptMessages, genericInputError);
+user.GetFromConsole(nameof(user.MaritalStatus),
+    o => (MaritalStatus)int.Parse(o!),
+    maritalStatusPromptMessages,
+    genericInputError);
 
 if (user.IsLegallyMarried)
 {
     user.PartnerInfo = serviceProvider.GetRequiredService<PersonVM>();
-    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.FirstName), o => o!, "Please enter your partner's first name...", genericInputError);
-    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.Surname), o => o!, "Please enter your partner's surname...", genericInputError);
-    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.DateOfBirth), o => DateTime.Parse(o!), "Please enter your partner's date of birth in MM/DD/YR format...", genericInputError);
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.FirstName),
+        o => o!, "Please enter your partner's first name...",
+        genericInputError);
+
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.Surname),
+        o => o!,
+        "Please enter your partner's surname...",
+        genericInputError);
+
+    user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.DateOfBirth),
+        o => DateTime.Parse(o!),
+        "Please enter your partner's date of birth in MM/DD/YR format...",
+        genericInputError);
+
     if (user.PartnerInfo.DateOfBirth.AddYears(18) > DateTime.UtcNow)
     {
         user.PartnerInfo.GetFromConsole(nameof(user.PartnerInfo.ParentalConsent),
@@ -71,11 +97,11 @@ if (user.IsLegallyMarried)
             parentConsentPromptMessages,
             genericInputError);
     }
-
 }
 
 var exportService = serviceProvider.GetRequiredService<UserExporterService>();
 bool exported = exportService.SaveUser(user);
+
 if (exported)
 {
     Console.WriteLine("User successfully exported; you can now close this application...");

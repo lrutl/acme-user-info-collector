@@ -28,7 +28,7 @@
         /// <summary>
         /// Never married/single
         /// </summary>
-        NeverMarried,
+        Single,
 
         /// <summary>
         /// Living with a partner but not legally married
