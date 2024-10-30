@@ -119,7 +119,7 @@ namespace Acme.UserInfoCollector.Middleware
             if (user.PartnerInfo != null)
             {
                 string partnerData = GetUserInfoLine(user.PartnerInfo);
-                string partnerDataPath = string.Format(partnerExportPathFormat, $"{user.PartnerInfo.FirstName}.{Guid.NewGuid()}.txt");
+                string partnerDataPath = string.Format(partnerExportPathFormat, $"{user.PartnerInfo.FirstName}.{Guid.NewGuid()}");
                 string fullPartnerDataPath = Path.GetFullPath(partnerDataPath);
 
                 userData = $"{userData}{fullPartnerDataPath}";

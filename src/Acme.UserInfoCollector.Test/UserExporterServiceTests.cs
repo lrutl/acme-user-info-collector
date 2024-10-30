@@ -64,7 +64,6 @@ namespace Acme.UserInfoCollector.Test
 
             user.PartnerInfo = GetJohnDoe();
             user.PartnerInfo.FirstName = "Jane";
-            user.PartnerInfo.MaritalStatus = MaritalStatus.Married;
 
             var exportService = _serviceProvider.GetService<UserExporterService>();
             Assert.That(exportService, Is.Not.Null);

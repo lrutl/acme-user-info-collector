@@ -85,7 +85,15 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Partner information if user is married
         /// </summary>
-        public PersonVM PartnerInfo {  get => _PartnerInfo; set => SetProperty(ref _PartnerInfo, value); }
+        public PersonVM PartnerInfo
+        { 
+            get => _PartnerInfo;
+            set
+            {
+                SetProperty(ref _PartnerInfo, value);
+                PartnerInfo.MaritalStatus = MaritalStatus;
+            }
+        }
 
         /// <summary>
         /// Path to partner info
