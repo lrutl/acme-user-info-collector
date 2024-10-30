@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
@@ -12,6 +13,7 @@ namespace Acme.UserInfoCollector.Middleware
     /// </summary>
     public class UserExporterService
     {
+        private IServiceProvider _serviceProvider;
         private ILogger<UserExporterService> _logger;
         private IConfiguration _configuration;
 
@@ -19,8 +21,9 @@ namespace Acme.UserInfoCollector.Middleware
         /// This is the parameterized constructor for the user exporter service.
         /// </summary>
         /// <param name="logger">DI provided logger</param>
-        public UserExporterService(ILogger<UserExporterService> logger, IConfiguration configuration)
+        public UserExporterService(IServiceProvider serviceProvider, ILogger<UserExporterService> logger, IConfiguration configuration)
         {
+            _serviceProvider = serviceProvider;
             _logger = logger;
             _configuration = configuration;
         }
@@ -33,7 +36,7 @@ namespace Acme.UserInfoCollector.Middleware
 
         public static string GetUserInfoLine(PersonVM user)
         {
-            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth}|{user.MaritalStatus}|{user.ParentalConsent}|";
+            return $"{user.FirstName}|{user.Surname}|{user.DateOfBirth.Date}|{user.MaritalStatus}|{user.ParentalConsent}|";
         }
 
         /// <summary>
@@ -43,6 +46,17 @@ namespace Acme.UserInfoCollector.Middleware
         /// <returns>True if saved correctly, false if otherwise</returns>
         public bool SaveUser(PersonVM user)
         {
+            var ctx = new ValidationContext(user, _serviceProvider, new Dictionary<object, object>());
+            try
+            {
+                Validator.ValidateObject(user, ctx, true);
+            }
+            catch (ValidationException vex)
+            {
+                _logger.LogError("Service was provided with an invalid user to export; see following messages for more details");
+                _logger.LogError(vex.Message);
+            }
+
             string userExportPath = _configuration.GetValue<string>("UserExportPath");
             string partnerExportPathFormat = _configuration.GetValue<string>("UserPartnerExportPath");
 

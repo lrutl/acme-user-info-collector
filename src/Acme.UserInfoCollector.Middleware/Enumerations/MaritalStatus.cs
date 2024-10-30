@@ -8,7 +8,7 @@
         /// <summary>
         /// Married
         /// </summary>
-        Married,
+        Married = 1,
 
         /// <summary>
         /// Widowed

@@ -24,10 +24,11 @@ var user = serviceProvider.GetRequiredService<PersonVM>();
 string genericInputError = "Invalid entry";
 
 Console.WriteLine("Hello, this is an application meant to collect and store basic data about its users.");
+Console.WriteLine();
 
-user.FirstName = Prompter.GetFromUser(o => o!, "Please enter your first name...", genericInputError);
-user.Surname = Prompter.GetFromUser(o => o!, "Please enter your surname...", genericInputError);
-user.DateOfBirth = Prompter.GetFromUser(o => DateTime.Parse(o!), "Please enter your date of birth in MM/DD/YR format...", genericInputError);
+user.GetFromConsole(nameof(user.FirstName), o => o!, "Please enter your first name...", genericInputError);
+user.GetFromConsole(nameof(user.Surname), o => o!, "Please enter your surname...", genericInputError);
+user.GetFromConsole(nameof(user.DateOfBirth), o => DateTime.Parse(o!), "Please enter your date of birth in MM/DD/YR format...", genericInputError);
 
 var maritalStatusPromptMessages = new List<string>()
 {
@@ -36,10 +37,10 @@ var maritalStatusPromptMessages = new List<string>()
 
 foreach (int maritalStatus in typeof(MaritalStatus).GetEnumValues())
 {
-    maritalStatusPromptMessages.Add($"{maritalStatus + 1}. {((MaritalStatus)maritalStatus)}");
+    maritalStatusPromptMessages.Add($"{maritalStatus}. {((MaritalStatus)maritalStatus)}");
 }
 
-user.MaritalStatus = Prompter.GetFromUser(o => (MaritalStatus)int.Parse(o!) - 1, maritalStatusPromptMessages, genericInputError);
+user.GetFromConsole(nameof(user.MaritalStatus), o => (MaritalStatus)int.Parse(o!), maritalStatusPromptMessages, genericInputError);
 
 var exportService = serviceProvider.GetRequiredService<UserExporterService>();
 bool exported = exportService.SaveUser(user);

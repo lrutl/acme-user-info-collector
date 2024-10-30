@@ -2,12 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace Acme.UserInfoCollector.Middleware
 {
-    [DataContract]
-    public class PersonVM : ObservableObject
+    public class PersonVM : ObservableValidator
     {
         private readonly ILogger<PersonVM> _logger;
         private readonly UserExporterService _userExporterService;
@@ -34,25 +33,23 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// First name of the user whose information is being collected
         /// </summary>
-        [DataMember]
+        [CustomValidation(typeof(PersonVM), nameof(ValidateStringDoesNotContainPipes))]
         public string FirstName { get => _FirstName; set => SetProperty(ref _FirstName, value); }
 
         /// <summary>
         /// Sirname/last name of the user whose information is being collected
         /// </summary>
-        [DataMember]
+        [CustomValidation(typeof(PersonVM), nameof(ValidateStringDoesNotContainPipes))]
         public string Surname { get => _Surname; set => SetProperty(ref _Surname, value); }
 
         /// <summary>
         /// User's date of birth
         /// </summary>
-        [DataMember]
         public DateTime DateOfBirth { get => _DateOfBirth; set => SetProperty(ref _DateOfBirth, value); }
 
         /// <summary>
         /// Marital status of the user
         /// </summary>
-        [DataMember]
         public MaritalStatus MaritalStatus { get => _MaritalStatus; set => SetProperty(ref _MaritalStatus, value); }
 
         /// <summary>
@@ -79,7 +76,6 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Whether or not the user's parent has given consent for info to be exported
         /// </summary>
-        [DataMember]
         public ParentalConsent ParentalConsent { get => _ParentalConsent; set => SetProperty(ref _ParentalConsent, value); }
 
         /// <summary>
@@ -90,7 +86,21 @@ namespace Acme.UserInfoCollector.Middleware
         /// <summary>
         /// Path to partner info
         /// </summary>
-        [DataMember]
         public string PartnerInfoPath { get => _PartnerInfoPath; set => SetProperty(ref _PartnerInfoPath, value); }
+
+        /// <summary>
+        /// Custom validation to ensure user does not break the data store
+        /// </summary>
+        /// <param name="toValidate">String to validate</param>
+        /// <returns>Validaiton result</returns>
+        public static ValidationResult ValidateStringDoesNotContainPipes(string toValidate, ValidationContext context)
+        {
+            if (!toValidate.Contains("|"))
+            {
+                return ValidationResult.Success;
+            }
+
+            return new ValidationResult("The provided value contains unsupported special characters");
+        }
     }
 }
