@@ -42,11 +42,11 @@ namespace Acme.UserInfoCollector.Middleware
         }
 
         /// <summary>
-        /// Persist a given user to a pre-configured *.csv location
+        /// Validate a given user
         /// </summary>
-        /// <param name="user">User to export</param>
-        /// <returns>True if saved correctly, false if otherwise</returns>
-        public bool SaveUser(PersonVM user)
+        /// <param name="user">User to validate</param>
+        /// <returns>True if given a valid user</returns>
+        public bool ValidateUser(PersonVM user)
         {
             var ctx = new ValidationContext(user, _serviceProvider, new Dictionary<object, object>());
             try
@@ -57,6 +57,26 @@ namespace Acme.UserInfoCollector.Middleware
             {
                 _logger.LogError("Service was provided with an invalid user to export; see following messages for more details");
                 _logger.LogError(vex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Persist a given user to a pre-configured *.csv location
+        /// </summary>
+        /// <param name="user">User to export</param>
+        /// <returns>True if saved correctly, false if otherwise</returns>
+        public bool SaveUser(PersonVM user)
+        {
+            if (ValidateUser(user) == false)
+            {
+                return false;
+            }
+
+            if (user.IsLegallyMarried && ValidateUser(user.PartnerInfo) == false)
+            {
                 return false;
             }
 

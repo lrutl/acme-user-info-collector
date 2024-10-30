@@ -1,4 +1,5 @@
 using Acme.UserInfoCollector.Middleware;
+using Acme.UserInfoCollector.Middleware.Enumerations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -7,18 +8,19 @@ namespace Acme.UserInfoCollector.Test
 {
     public class Tests
     {
+        private IConfiguration _configuration;
         private IServiceProvider _serviceProvider;
 
         [SetUp]
         public void Setup()
         {
-            var configuration = new ConfigurationBuilder()
+            _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .Build();
 
             _serviceProvider = new ServiceCollection()
                 .AddLogging()
-                .AddSingleton<IConfiguration>(configuration)
+                .AddSingleton(_configuration)
                 .AddSingleton<UserExporterService>()
                 .AddTransient<PersonVM>()
                 .BuildServiceProvider();
@@ -46,6 +48,35 @@ namespace Acme.UserInfoCollector.Test
             Assert.That(exportService, Is.Not.Null);
 
             exportService.SaveUser(user);
+
+            var filePath = _configuration.GetValue<string>("UserExportPath");
+            Assert.That(filePath, Is.Not.Null);
+
+            List<string> allUsers = File.ReadAllLines(filePath).ToList();
+            Assert.That(allUsers.Last(), Is.EqualTo("John|Doe|01-01-1970|Single|null|"));
+        }
+
+        [Test]
+        public void SaveUserPartnerTest()
+        {
+            var user = GetJohnDoe();
+            user.MaritalStatus = MaritalStatus.Married;
+            user.PartnerInfo = GetJohnDoe();
+            user.PartnerInfo.MaritalStatus = MaritalStatus.Married;
+
+            var exportService = _serviceProvider.GetService<UserExporterService>();
+            Assert.That(exportService, Is.Not.Null);
+
+            exportService.SaveUser(user);
+
+            var filePath = _configuration.GetValue<string>("UserExportPath");
+            Assert.That(filePath, Is.Not.Null);
+
+            List<string> allUsers = File.ReadAllLines(filePath).ToList();
+            var latestUser = allUsers.Last();
+            var partnerInfoPath = latestUser.Split("|").Last();
+            string partnerInfo = File.ReadAllText(partnerInfoPath);
+            Assert.That(partnerInfo, Is.EqualTo("John|Doe|01-01-1970|Married|null|"));
 
             Assert.Pass();
         }
