@@ -39,6 +39,10 @@ namespace Acme.UserInfoCollector.ConsoleApp
                         Console.WriteLine();
                         continue;
                     }
+                    catch (Exception)
+                    {
+                        // Prompt the user for another value
+                    }
                 }
                 
                 Console.WriteLine(invalidMessage);
